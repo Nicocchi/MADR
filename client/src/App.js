@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.css";
 import ReactPlayer from "react-player";
 import { Progress } from "reactstrap";
+import jsmediatags from "jsmediatags";
 require("dotenv").config();
 
 class App extends Component {
@@ -10,9 +11,10 @@ class App extends Component {
         super(props);
         this.state = {
             tracks: [],
-            currentTrack: { data: "", filename: "" },
+            currentTrack: { data: "", filename: "", blob: "", id3: '' },
             currentProgess: 0,
             totalProgress: 0,
+            image: '',
         };
     }
     componentDidMount() {
@@ -33,6 +35,8 @@ class App extends Component {
 
                         const ct = {
                             data: url,
+                            blob: res1.data,
+                            id3: '',
                             filename: res.data.songs[0].filename,
                         };
                         this.setState(
@@ -75,6 +79,8 @@ class App extends Component {
 
                         const ct = {
                             data: url,
+                            blob: res1.data,
+                            id3: '',
                             filename: oldTracks[0].filename,
                         };
                         this.setState(
@@ -109,7 +115,57 @@ class App extends Component {
         );
     };
 
+    _arrayBufferToBase64 = ( buffer ) => {
+        // var binary = '';
+        // var bytes = new Uint8Array( buffer );
+        // var len = bytes.byteLength;
+        // for (var i = 0; i < len; i++) {
+        //     binary += String.fromCharCode( bytes[ i ] );
+        // }
+        let base64String = '';
+        for (let i = 0; i < buffer.data.length; i++) {
+            base64String += String.fromCharCode(buffer.data[i]);
+        }
+        // this.setState({ image: `data:${buffer.format};base64${window.btoa(base64String)}` })
+        return `data:${buffer.format};base64,${window.btoa(base64String)}`
+        // return `;base64,${window.btoa( binary )}`;
+    }
+
+    getTags = (url) => {      
+        return new Promise((resolve, reject) => {
+            new jsmediatags.Reader(url)
+              .read({
+                onSuccess: (tag) => {                
+                //   resolve( this._arrayBufferToBase64(tag.tags.picture["data"]));
+                    resolve(tag)
+                },
+                onError: (error) => {                
+                  reject(error);
+                }
+              });
+          });
+      }
+
+    readID3 = async () => {
+        if (this.state.currentTrack.id3 !== '') return;
+        if (this.state.currentTrack.blob !== "") {
+            this.getTags(this.state.currentTrack.blob).then(res => {
+                const ct = {
+                    ...this.state.currentTrack,
+                    id3: res
+                };
+
+                console.log(ct);
+                const image = this._arrayBufferToBase64(res.tags.picture)
+                console.log("image", image)
+
+                this.setState({ currentTrack: ct, image });
+            })
+        }
+    }
+
     render() {
+        this.readID3();
         var h = Math.floor(this.state.totalProgress / 3600);
         var m = Math.floor((this.state.totalProgress % 3600) / 60);
         var s = Math.floor((this.state.totalProgress % 3600) % 60);
@@ -129,23 +185,27 @@ class App extends Component {
         var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "0";
 
         const dd1 = hDisplay + mDisplay + sDisplay;
+        
         return (
             <div>
-                {/* <button onClick={() => this.setNewTrack()}>New Track</button> */}
+                <button onClick={() => this.setNewTrack()}>New Track</button>
                 <p className="text-center">
                     {this.state.currentTrack.filename}
                 </p>
                 <div className="text-center">
                     {dd1} - {dd}
                 </div>
-                {/* <audio controls="controls" src={this.state.currentTrack.data} type="audio/mp3" /> */}
+                <div className="image-wrapper">
+                    <img className="img" alt="logo" src={this.state.image} />
+                </div>
                 <ReactPlayer
                     url={this.state.currentTrack.data}
                     playing
                     controls={false}
                     onEnded={this.setNewTrack}
-                    height="50px"
+                    height="0px"
                     onProgress={this.setProgess}
+                    style={{visibility: 'hidden'}}
                 />
                 <Progress
                     striped

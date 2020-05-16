@@ -9,9 +9,9 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "dotenv": "^8.2.0",
+    "jsmediatags": "^3.9.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-media-player": "^0.7.9",
     "react-player": "^2.0.1",
     "react-scripts": "3.4.1",
     "reactstrap": "^8.4.1"
