@@ -3,6 +3,7 @@
 @import 'Components/ControlBar/ControlBar';
 @import 'Components/Navigation/Navibation';
 @import 'Components/MainContent/MusicList/MusicList';
+@import 'Pages/Library/Library.scss';
 
 .wrapper {
     // display: flex;
@@ -21,16 +22,9 @@
 }
 
 .main-content {
-    // border: 1px solid red;
     width: 100%;
     height: 92vh;
     overflow-y: scroll;
     scrollbar-color: $thm-haiti $thm-burst;
     scrollbar-width: normal;
-}
-
-.header-content {
-    width: 100%;
-    height: 340px;
-    background-color: $thm-cello;
 }

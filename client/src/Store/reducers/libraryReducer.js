@@ -2,7 +2,7 @@ import { CONSTANTS } from "../actions";
 
 const initialState = {
     tracks: [],
-    currentTrack: { url: "", index: 0, metadata: {} },
+    currentTrack: { url: "", index: 0, metadata: {common: {title: "Unkown", artist: "Unkown"}} },
     currentProgess: 0,
     totalProgress: 0,
     image: "",

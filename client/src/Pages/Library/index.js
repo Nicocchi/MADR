@@ -9,7 +9,12 @@ function Library(props) {
     return (
         <div>
             <TopNavbar />
-            <div className="header-content"></div>
+            <div className="header-content">
+                <img atl="playlist logo" src="/images/temp-cover.png" />
+                <div className="header-text">
+                    <h2>Your Library</h2>
+                </div>
+            </div>
             <MusicList 
             tracks={props.library.tracks} 
             playSong={props.playSong} 

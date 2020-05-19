@@ -1,23 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Duration from "../Duration";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faPlay, faPause, faForward, faBackward, faRedo, faAsterisk, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faCoffee,
+    faPlay,
+    faPause,
+    faForward,
+    faBackward,
+    faRedo,
+    faAsterisk,
+    faVolumeMute,
+    faVolumeUp,
+} from "@fortawesome/free-solid-svg-icons";
 
 function ControlBar(props) {
-    const title = props.currentTrack
-        ? props.currentTrack.metadata.hasOwnProperty("tags")
-            ? props.currentTrack.metadata.tags.title
-            : props.currentTrack.filename
-        : "";
-    const artist = props.currentTrack
-        ? props.currentTrack.metadata.hasOwnProperty("tags")
-            ? props.currentTrack.metadata.tags.artist
-            : ""
-        : "";
-    const image = props.currentTrack.metadata.hasOwnProperty("tags")
-        ? props.currentTrack.metadata.tags.hasOwnProperty("picture")
-            ? props._arrayBufferToBase64(props.currentTrack.metadata.tags.picture)
+    console.log(props.currentTrack.metadata.common);
+    const title = props.currentTrack ? props.currentTrack.metadata.common.title : props.currentTrack.filename;
+    const artist = props.currentTrack ? props.currentTrack.metadata.common.artist : "Unkown";
+    const image = props.currentTrack
+        ? props.currentTrack.metadata.common.picture
+            ? `data:${props.currentTrack.metadata.common.picture[0].format};base64,${props.currentTrack.metadata.common.picture[0].data.toString('base64')}`
             : "/images/temp-cover.png"
         : "/images/temp-cover.png";
     return (
@@ -31,12 +34,9 @@ function ControlBar(props) {
             </div>
             <div className="controls">
                 <div className="controls-top">
-                    {/* <button onClick={() => props.setNewTrack(props.index - 1)}>Previous</button> */}
                     <FontAwesomeIcon icon={faBackward} onClick={() => props.setNewTrack(props.index - 1)} />
                     <FontAwesomeIcon icon={props.playing ? faPause : faPlay} onClick={() => props.handlePlayPause()} />
                     <FontAwesomeIcon icon={faForward} onClick={() => props.setNewTrack(props.index + 1)} />
-                    {/* <button onClick={() => props.handlePlayPause()}>{props.playing ? "Pause" : "Play"}</button> */}
-                    {/* <button onClick={() => props.setNewTrack(props.index + 1)}>Next</button> */}
                 </div>
                 <div className="controls-bottom">
                     <Duration seconds={props.duration * props.played} />
@@ -56,8 +56,16 @@ function ControlBar(props) {
             </div>
             <div className="controls-right">
                 {/* <FontAwesomeIcon style={{marginRight: "5px"}} icon={faCoffee} /> */}
-                <FontAwesomeIcon style={{marginRight: "5px"}} onClick={props.handleToggleLoop} icon={props.loop ? faRedo : props.loopAll ? faCoffee : faAsterisk} />
-                <FontAwesomeIcon style={{marginRight: "5px"}} onClick={props.handleToggleMuted} icon={props.muted || props.volume === 0 ? faVolumeMute : faVolumeUp} />
+                <FontAwesomeIcon
+                    style={{ marginRight: "5px" }}
+                    onClick={props.handleToggleLoop}
+                    icon={props.loop ? faRedo : props.loopAll ? faCoffee : faAsterisk}
+                />
+                <FontAwesomeIcon
+                    style={{ marginRight: "5px" }}
+                    onClick={props.handleToggleMuted}
+                    icon={props.muted || props.volume === 0 ? faVolumeMute : faVolumeUp}
+                />
                 <input
                     id="volume"
                     type="range"

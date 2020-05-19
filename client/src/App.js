@@ -30,10 +30,13 @@ class App extends PureComponent {
      * Convert's an Array Buffer to Base64 String
      */
     _arrayBufferToBase64 = (buffer) => {
+        console.log("BUFFER", buffer)
         let base64String = "";
         for (let i = 0; i < buffer.data.length; i++) {
             base64String += String.fromCharCode(buffer.data[i]);
         }
+
+        console.log(`data:${buffer.format};base64,${window.btoa(base64String)}`)
 
         return `data:${buffer.format};base64,${window.btoa(base64String)}`;
     };

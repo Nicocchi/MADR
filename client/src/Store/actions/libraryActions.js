@@ -37,6 +37,24 @@ export const playSong = (index) => {
 export const handlePlayPause = () => {
     return (dispatch, getState) => {
         const state = getState();
+        if (state.library.currentTrack.url === "") {
+            const track = state.library.tracks[0];
+            if (track === undefined) return;
+            axios
+                .get(`${process.env.REACT_APP_STREAM_URL}/api/tracks/${track._id}`, { responseType: "blob" })
+                .then((res) => {
+                    const url = window.URL.createObjectURL(res.data);
+                    const currentTrack = {
+                        url,
+                        index: 0,
+                    };
+
+                    return dispatch({
+                        type: CONSTANTS.PLAY_SONG,
+                        payload: { currentTrack: currentTrack, playing: true, played: 0 },
+                    });
+                });
+        }
         dispatch({
             type: CONSTANTS.PAUSE_SONG,
             payload: { playing: !state.library.playing },
