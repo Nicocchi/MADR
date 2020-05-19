@@ -4,6 +4,10 @@
   /* border: 2px solid red; */
 }
 
+.btn {
+  border: 1px solid blue;
+}
+
 .media-player {
   display: flex;
   flex-direction: column;

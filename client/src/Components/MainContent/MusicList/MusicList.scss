@@ -1,0 +1,11 @@
+.list-container {
+    display: flex;
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 1%;
+    background-color: $thm-burst;
+}
+
+.list-item:hover {
+    background: $thm-burst;
+}

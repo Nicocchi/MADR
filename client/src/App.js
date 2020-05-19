@@ -1,10 +1,11 @@
 import React, { PureComponent } from "react";
 import axios from "axios";
-import "./App.css";
+import "./App.scss";
 import ReactPlayer from "react-player";
-import { Table } from "reactstrap";
-import shortid from "shortid";
-import Duration from "./Duration";
+import ControlBar from "./Components/ControlBar";
+import Navigation from "./Components/Navigation";
+import MusicList from "./Components/MainContent/MusicList/MusicList";
+import TopNavbar from "./Components/Navigation/TopNavbar";
 require("dotenv").config();
 
 class App extends PureComponent {
@@ -20,8 +21,10 @@ class App extends PureComponent {
             duration: 0,
             played: 0,
             seeking: false,
-            volume: 0.8,
+            volume: 1,
             loop: false,
+            loopAll: false,
+            loopIndex: 0,
             muted: false,
         };
     }
@@ -30,7 +33,7 @@ class App extends PureComponent {
         axios.get(`${process.env.REACT_APP_STREAM_URL}/api/tracks/`).then((res) => {
             this.setState({
                 tracks: res.data.songs,
-            });
+            }, () => console.log("NO LOOP", this.state.loopIndex));
         });
     }
 
@@ -38,7 +41,7 @@ class App extends PureComponent {
      * Set's the new track index
      */
     setNewTrack = (index) => {
-        this.playSong(index);
+        this.playSong(index)
     };
 
     /**
@@ -88,7 +91,23 @@ class App extends PureComponent {
     };
 
     handleToggleLoop = () => {
-        this.setState({ loop: !this.state.loop });
+        const index = this.state.loopIndex + 1;
+        if (index >= 3) {
+            this.setState({ loop: false, loopIndex: 0, loopAll: false }, () => console.log("NO LOOP", this.state.loopIndex));
+        }
+        else if (index === 2) {
+            this.setState({ loop: false, loopIndex: index, loopAll: true }, () => console.log("LOOP ALL", this.state.loopIndex));
+            return;
+        } else if (index === 1) {
+            this.setState({ loop: true, loopIndex: index, loopAll: false }, () => console.log("LOOP", this.state.loopIndex));
+            return;
+        } else if (index === 0) {
+            this.setState({ loop: false, loopIndex: index, loopAll: false }, () => console.log("NO LOOP", this.state.loopIndex));
+        }
+    };
+
+    handleToggleLoopAll = () => {
+        this.setState({ loop: false, loopAll: !this.state.loopAll, loopIndex: 0 }, () => console.log(this.state.loopIndex));
     };
 
     handleToggleMuted = () => {
@@ -96,12 +115,10 @@ class App extends PureComponent {
     };
 
     handlePause = () => {
-        console.log("onPause");
         this.setState({ playing: false });
     };
 
     handlePlay = () => {
-        console.log("onPlay");
         this.setState({ playing: true });
     };
 
@@ -158,7 +175,24 @@ class App extends PureComponent {
     };
 
     handleEnded = () => {
-        console.log("onEnded");
+        console.log("handleEnded", this.state)
+        if (this.state.loopAll) {
+            console.log("HE LOOPALL")
+            if (this.state.tracks[this.state.currentTrack.index + 1]) {
+                this.playSong(this.state.currentTrack.index + 1);
+            } else {
+                this.playSong(0);
+            }
+            return;
+        }
+        if (!this.state.loop) {
+            this.playSong(this.state.currentTrack.index + 1);
+            return;
+        } else if (!this.state.loopAll) {
+            this.playSong(this.state.currentTrack.index + 1);
+            return;
+        }
+
         this.setState({ playing: this.state.loop });
     };
 
@@ -167,162 +201,64 @@ class App extends PureComponent {
     };
 
     render() {
-        // var h = Math.floor(this.state.totalProgress / 3600);
-        // var m = Math.floor((this.state.totalProgress % 3600) / 60);
-        // var s = Math.floor((this.state.totalProgress % 3600) % 60);
-
-        const title =
-            this.state.tracks.length > 0 &&
-            this.state.tracks[this.state.currentTrack.index].metadata.hasOwnProperty("tags")
-                ? this.state.tracks[this.state.currentTrack.index].metadata.tags.title
-                : "";
-
-        const album =
-            this.state.tracks.length > 0 &&
-            this.state.tracks[this.state.currentTrack.index].metadata.hasOwnProperty("tags")
-                ? this.state.tracks[this.state.currentTrack.index].metadata.tags.album
-                : "";
-
-        const artist =
-            this.state.tracks.length > 0 &&
-            this.state.tracks[this.state.currentTrack.index].metadata.hasOwnProperty("tags")
-                ? this.state.tracks[this.state.currentTrack.index].metadata.tags.artist
-                : "";
-
-        const image =
-            this.state.tracks.length > 0 &&
-            this.state.tracks[this.state.currentTrack.index].metadata.hasOwnProperty("tags")
-                ? this.state.tracks[this.state.currentTrack.index].metadata.tags.hasOwnProperty("picture")
-                    ? this._arrayBufferToBase64(this.state.tracks[this.state.currentTrack.index].metadata.tags.picture)
-                    : "/images/temp-cover.png"
-                : "/images/temp-cover.png";
-
+        const currentTrack = this.state.tracks[this.state.currentTrack.index]
+            ? this.state.tracks[this.state.currentTrack.index]
+            : this.state.currentTrack;
         return (
-            <div className="parent-wrapper">
-                <div className="media-player">
-                    <div className="media-top">
-                        <div className="image-wrapper">
-                            <img className="img" alt="logo" src={image} />
+            <div className="wrapper">
+                <ReactPlayer
+                    ref={this.ref}
+                    height="0px"
+                    url={this.state.currentTrack.url}
+                    playing={this.state.playing}
+                    controls={false}
+                    loop={this.state.loop}
+                    muted={this.state.muted}
+                    volume={this.state.volume}
+                    onPlay={this.handlePlay}
+                    onPause={this.handlePause}
+                    onEnded={this.handleEnded}
+                    onSeek={(e) => console.log("onSeek", e)}
+                    onProgress={this.handleProgress}
+                    onDuration={this.handleDuration}
+                    style={{ visibility: "hidden" }}
+                />
+                <div className="main-container">
+                    <Navigation />
+                    <div className="main-content">
+                        <TopNavbar />
+                        <div className="header-content">
+
                         </div>
-                        <div className="player">
-                            <ReactPlayer
-                                ref={this.ref}
-                                height="0px"
-                                url={this.state.currentTrack.url}
-                                playing={this.state.playing}
-                                controls={false}
-                                loop={this.state.loop}
-                                muted={this.state.muted}
-                                volume={this.state.volume}
-                                onPlay={this.handlePlay}
-                                onPause={this.handlePause}
-                                onEnded={this.handleEnded}
-                                onSeek={(e) => console.log("onSeek", e)}
-                                onProgress={this.handleProgress}
-                                onDuration={this.handleDuration}
-                                style={{ visibility: "hidden" }}
-                            />
-                            <div className="media-info">
-                                <p>Currently playing - {title}</p>
-                                <p>Album - {album}</p>
-                                <p>Artist - {artist}</p>
-                            </div>
-                            <div className="media-buttons">
-                                <span className="media-span">
-                                    <label htmlFor="volume">Volume</label>
-                                    <input
-                                        id="volume"
-                                        type="range"
-                                        min={0}
-                                        max={1}
-                                        step="any"
-                                        value={this.state.volume}
-                                        onChange={this.handleVolumeChange}
-                                    />
-                                </span>
-                                <span className="media-span">
-                                    <label htmlFor="muted">Muted</label>
-                                    <input
-                                        id="muted"
-                                        type="checkbox"
-                                        checked={this.state.muted}
-                                        onChange={this.handleToggleMuted}
-                                    />
-                                </span>
-                                <span className="media-span">
-                                    <label htmlFor="loop">Loop</label>
-                                    <input
-                                        id="loop"
-                                        type="checkbox"
-                                        checked={this.state.loop}
-                                        onChange={this.handleToggleLoop}
-                                    />
-                                </span>
-                                <button onClick={() => this.setNewTrack(this.state.currentTrack.index - 1)}>
-                                    Previous
-                                </button>
-                                <button onClick={() => this.handlePlayPause()}>
-                                    {this.state.playing ? "Pause" : "Play"}
-                                </button>
-                                <button onClick={() => this.setNewTrack(this.state.currentTrack.index + 1)}>
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="media-seek">
-                        <Duration seconds={this.state.duration * this.state.played} />
-                        <input
-                            className="progess-bar"
-                            type="range"
-                            min={0}
-                            max={0.999999}
-                            step="any"
-                            value={this.state.played}
-                            onMouseDown={this.handleSeekMouseDown}
-                            onChange={this.handleSeekChange}
-                            onMouseUp={this.handleSeekMouseUp}
+                        <MusicList
+                            tracks={this.state.tracks}
+                            playSong={this.playSong}
+                            index={this.state.currentTrack.index}
                         />
-                        <Duration seconds={this.state.duration} />
                     </div>
                 </div>
 
-                <div className="media-list">
-                    {
-                        <Table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Title</th>
-                                    <th>Album</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.tracks.map((track, index) => {
-                                    return (
-                                        <tr
-                                            onClick={() => this.playSong(index)}
-                                            key={shortid.generate()}
-                                            className={
-                                                this.state.currentTrack.index === index
-                                                    ? "highlighted-song"
-                                                    : "table-hover"
-                                            }
-                                        >
-                                            <th scope="row">{index + 1}</th>
-                                            <td>
-                                                {track.metadata.hasOwnProperty("tags") ? track.metadata.tags.title : ""}
-                                            </td>
-                                            <td>
-                                                {track.metadata.hasOwnProperty("tags") ? track.metadata.tags.album : ""}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </Table>
-                    }
-                </div>
+                <ControlBar
+                    played={this.state.played}
+                    playing={this.state.playing}
+                    volume={this.state.volume}
+                    loop={this.state.loop}
+                    loopAll={this.state.loopAll}
+                    muted={this.state.muted}
+                    index={this.state.currentTrack.index}
+                    duration={this.state.duration}
+                    currentTrack={currentTrack}
+                    handleSeekMouseDown={this.handleSeekMouseDown}
+                    handleSeekChange={this.handleSeekChange}
+                    handleSeekMouseUp={this.handleSeekMouseUp}
+                    handlePlayPause={this.handlePlayPause}
+                    handleVolumeChange={this.handleVolumeChange}
+                    handleToggleMuted={this.handleToggleMuted}
+                    handleToggleLoop={this.handleToggleLoop}
+                    handleToggleLoopAll={this.handleToggleLoopAll}
+                    _arrayBufferToBase64={this._arrayBufferToBase64}
+                    setNewTrack={this.setNewTrack}
+                />
             </div>
         );
     }

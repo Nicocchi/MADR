@@ -1,0 +1,36 @@
+@import 'styles/config';
+@import 'styles/buttons';
+@import 'Components/ControlBar/ControlBar';
+@import 'Components/Navigation/Navibation';
+@import 'Components/MainContent/MusicList/MusicList';
+
+.wrapper {
+    // display: flex;
+    // flex-direction: column;
+    width: 100%;
+    background-color: $thm-burst;
+    color: white;
+    // height: 100%;
+    // border: 1px solid white;
+}
+
+.main-container {
+    display: flex;
+    width: 100%;
+    // border: 1px solid white;
+}
+
+.main-content {
+    // border: 1px solid red;
+    width: 100%;
+    height: 92vh;
+    overflow-y: scroll;
+    scrollbar-color: $thm-haiti $thm-burst;
+    scrollbar-width: normal;
+}
+
+.header-content {
+    width: 100%;
+    height: 340px;
+    background-color: $thm-cello;
+}

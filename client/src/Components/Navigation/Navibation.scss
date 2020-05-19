@@ -1,0 +1,38 @@
+.navbar-wrapper {
+    width: 275px;
+    background-color: $thm-haiti;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding: 0 1% 0 1%;
+
+    h4 {
+        font-size: 22px;
+        margin-top: 20px;
+    }
+}
+
+.navbar-logo {
+    width: 100%;
+    height: 60px;
+    margin-top: 20px;
+
+    img {
+        width: 100%;
+    }
+}
+
+.top-navbar {
+    width: 100%;
+    right: 0;
+    height: 60px;
+    // background-color: $thm-burst;
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // border: 1px solid white;
+    padding-left: 245px;
+    padding-right: 20px;
+}
