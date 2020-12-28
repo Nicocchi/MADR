@@ -10,7 +10,7 @@ function Library(props) {
         <div>
             <TopNavbar />
             <div className="header-content">
-                <img atl="playlist logo" src="/images/temp-cover.png" />
+                <img atl="playlist logo" src="/images/temp-cover.png" alt="album cover" />
                 <div className="header-text">
                     <h2>Your Library</h2>
                 </div>
@@ -23,7 +23,9 @@ function Library(props) {
     );
 }
 
-Library.propTypes = {};
+Library.propTypes = {
+    library: PropTypes.object
+};
 
 function mapStateToProps(state) {
     return {

@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import { NavLink } from "react-router-dom";
 
@@ -44,14 +43,14 @@ class Navigation extends React.Component {
                             Home
                         </ListGroupItem>
                     </NavLink>
-                    <ListGroupItem
+                    {/* <ListGroupItem
                         className="list-item"
                         style={{ ...styles, backgroundColor: this.state.hoverIndex === 1 ? "#3a506b" : "#0b132b" }}
                         onMouseEnter={() => this.onMouseEnter(1)}
                         onMouseLeave={() => this.onMouseLeave(1)}
                     >
                         Search
-                    </ListGroupItem>
+                    </ListGroupItem> */}
                     <NavLink to="/library" style={{ textDecoration: "none", color: "white" }}>
                         <ListGroupItem
                             className="list-item"
@@ -63,14 +62,12 @@ class Navigation extends React.Component {
                         </ListGroupItem>
                     </NavLink>
                 </ListGroup>
-                <div className="navbar-playlists">
+                {/* <div className="navbar-playlists">
                     <h4>Playlists</h4>
-                </div>
+                </div> */}
             </div>
         );
     }
 }
-
-Navigation.propTypes = {};
 
 export default Navigation;

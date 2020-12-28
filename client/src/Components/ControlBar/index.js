@@ -15,7 +15,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function ControlBar(props) {
-    console.log(props.currentTrack.metadata.common);
     const title = props.currentTrack ? props.currentTrack.metadata.common.title : props.currentTrack.filename;
     const artist = props.currentTrack ? props.currentTrack.metadata.common.artist : "Unkown";
     const image = props.currentTrack
@@ -80,6 +79,22 @@ function ControlBar(props) {
     );
 }
 
-ControlBar.propTypes = {};
+ControlBar.propTypes = {
+    currentTrack: PropTypes.object,
+    playing: PropTypes.bool,
+    loop: PropTypes.bool,
+    loopAll: PropTypes.bool,
+    muted: PropTypes.bool,
+    handlePlayPause: PropTypes.func,
+    handleSeekMouseDown: PropTypes.func,
+    handleSeekChange: PropTypes.func,
+    handleSeekMouseUp: PropTypes.func,
+    handleToggleLoop: PropTypes.func,
+    handleToggleMuted: PropTypes.func,
+    index: PropTypes.number,
+    duration: PropTypes.number,
+    played: PropTypes.number,
+    volume: PropTypes.number,
+};
 
 export default ControlBar;

@@ -57,6 +57,9 @@ class MusicList extends React.Component {
     }
 }
 
-MusicList.propTypes = {};
+MusicList.propTypes = {
+    tracks: PropTypes.array,
+    index: PropTypes.number,
+};
 
 export default MusicList;

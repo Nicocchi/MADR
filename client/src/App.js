@@ -30,13 +30,12 @@ class App extends PureComponent {
      * Convert's an Array Buffer to Base64 String
      */
     _arrayBufferToBase64 = (buffer) => {
-        console.log("BUFFER", buffer)
         let base64String = "";
         for (let i = 0; i < buffer.data.length; i++) {
             base64String += String.fromCharCode(buffer.data[i]);
         }
 
-        console.log(`data:${buffer.format};base64,${window.btoa(base64String)}`)
+        // console.log(`data:${buffer.format};base64,${window.btoa(base64String)}`)
 
         return `data:${buffer.format};base64,${window.btoa(base64String)}`;
     };
@@ -44,23 +43,19 @@ class App extends PureComponent {
     handleToggleLoop = () => {
         const index = this.state.loopIndex + 1;
         if (index >= 3) {
-            this.setState({ loop: false, loopIndex: 0, loopAll: false }, () =>
-                console.log("NO LOOP", this.state.loopIndex)
-            );
+            // No Loop
+            this.setState({ loop: false, loopIndex: 0, loopAll: false });
         } else if (index === 2) {
-            this.setState({ loop: false, loopIndex: index, loopAll: true }, () =>
-                console.log("LOOP ALL", this.state.loopIndex)
-            );
+            // Loop All
+            this.setState({ loop: false, loopIndex: index, loopAll: true });
             return;
         } else if (index === 1) {
-            this.setState({ loop: true, loopIndex: index, loopAll: false }, () =>
-                console.log("LOOP", this.state.loopIndex)
-            );
+            // Loop
+            this.setState({ loop: true, loopIndex: index, loopAll: false });
             return;
         } else if (index === 0) {
-            this.setState({ loop: false, loopIndex: index, loopAll: false }, () =>
-                console.log("NO LOOP", this.state.loopIndex)
-            );
+            // No Loop
+            this.setState({ loop: false, loopIndex: index, loopAll: false });
         }
     };
 
@@ -75,9 +70,8 @@ class App extends PureComponent {
     };
 
     handleEnded = () => {
-        console.log("handleEnded", this.state);
         if (this.props.library.loopAll) {
-            console.log("HE LOOPALL");
+            // LoopAll
             if (this.props.library.tracks[this.props.library.currentTrack.index + 1]) {
                 this.props.playSong(this.props.library.currentTrack.index + 1);
             } else {

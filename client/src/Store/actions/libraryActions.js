@@ -140,25 +140,25 @@ export const handleToggleLoop = () => {
         const state = getState();
         const index = state.library.loopIndex + 1;
         if (index >= 3) {
-            console.log("NO LOOP");
+            // No Loop
             return dispatch({
                 type: CONSTANTS.HANDLE_TOGGLE_LOOP,
                 payload: { loop: false, loopIndex: 0, loopAll: false },
             });
         } else if (index === 2) {
-            console.log("LOOP ALL");
+            // Loop All
             return dispatch({
                 type: CONSTANTS.HANDLE_TOGGLE_LOOP,
                 payload: { loop: false, loopIndex: index, loopAll: true },
             });
         } else if (index === 1) {
-            console.log("LOOP");
+            // Loop
             return dispatch({
                 type: CONSTANTS.HANDLE_TOGGLE_LOOP,
                 payload: { loop: true, loopIndex: index, loopAll: false },
             });
         } else if (index === 0) {
-            console.log("NO LOOP");
+            // No Loop
             return dispatch({
                 type: CONSTANTS.HANDLE_TOGGLE_LOOP,
                 payload: { loop: false, loopIndex: index, loopAll: false },
